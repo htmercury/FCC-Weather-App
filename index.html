@@ -6,16 +6,189 @@
   <title>Weather App</title>
   
   
-  
-  
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.css'>
+
+      <link rel="stylesheet" href="css/style.css">
+
   
 </head>
 
 <body>
 
+  <div class="loader-container">
+  <div class="loader">
+  </div>
+  <h6 class="text-white">Getting Ready..</h6>
+</div>
+<div class="nav">
+  <a href="javascript:void(0)" class="close" onclick="closeNav()">&times;</a>
+  <div class="menu">
+    <a class="attrib" href="https://darksky.net/poweredby/" target="_blank">Powered by Dark Sky</a>
+    <a class="made" href="https://codepen.io/htmercury/" target="_blank">Created by htmercury</a>
+    <div class="location-option">
+      <p>Location</p>
+      <input type="text" id="city-search" placeholder="e.g. Chicago, IL" autocomplete="on" runat="server">
+    </div>
+    <div class="temp-option">
+      <p>Temperature</p>
+      <span class="dropdown">
+      <select class="custom-select" onchange="adjustTemp(this.value)">
+    <option selected value="fahrenheit">Fahrenheit</option>
+    <option value="celsius">Celsius</option>
+  </select>
+      </span>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="current-wrapper wrapper">
+    <div class="current-info">
+      <h1 class="location">Chicago, IL</h1>
+      <div class="summary-wrapper">
+        <canvas id="main_icon" width="40" height="40"></canvas>
+        <h4 class="current-summary summary">Clear</h4>
+        <div class="spacer">
+        </div>
+        <div class="date-wrapper">
+          <p>Thursday&nbsp</p>
+          <p>Today</p>
+        </div>
+      </div>
+    </div>
+    <div class="current-stats">
+      <h1 class="temp">0°</h1>
+      <p class="apparentTemp">Feels like 0°</p>
+    </div>
+  </div>
+  <div class="wrapper inputted-data">
+    <div class="entry entry-1">
+      <div class="entry-summary">
+        <canvas id="icon1" class="summary-img"></canvas>
+        <h6 class="summary">Rain</h6>
+      </div>
+      <div class="entry-day">
+        <h4>Friday</h4>
+      </div>
+      <div class="entry-temp">
+        <h5>14&nbsp</h5>
+        <h6>6</h6>
+      </div>
+    </div>
+    <div class="entry entry-2">
+      <div class="entry-summary">
+        <canvas id="icon2" class="summary-img"></canvas>
+        <h6 class="summary">Partly Cloudy</h6>
+      </div>
+      <div class="entry-day">
+        <h4>Saturday</h4>
+      </div>
+      <div class="entry-temp">
+        <h5>12&nbsp</h5>
+        <h6>3</h6>
+      </div>
+    </div>
+    <div class="entry entry-3">
+      <div class="entry-summary">
+        <canvas id="icon3" class="summary-img"></canvas>
+        <h6 class="summary">Cloudy</h6>
+      </div>
+      <div class="entry-day">
+        <h4>Sunday</h4>
+      </div>
+      <div class="entry-temp">
+        <h5>10&nbsp</h5>
+        <h6>7</h6>
+      </div>
+    </div>
+    <div class="entry entry-4">
+      <div class="entry-summary">
+        <canvas id="icon4" class="summary-img"></canvas>
+        <h6 class="summary">Sleet</h6>
+      </div>
+      <div class="entry-day">
+        <h4>Monday</h4>
+      </div>
+      <div class="entry-temp">
+        <h5>9&nbsp</h5>
+        <h6>4</h6>
+      </div>
+    </div>
+    <div class="entry entry-5">
+      <div class="entry-summary">
+        <canvas id="icon5" class="summary-img"></canvas>
+        <h6 class="summary">Snow</h6>
+      </div>
+      <div class="entry-day">
+        <h4>Tuesday</h4>
+      </div>
+      <div class="entry-temp">
+        <h5>20&nbsp</h5>
+        <h6>14</h6>
+      </div>
+    </div>
+    <div class="entry entry-6">
+      <div class="entry-summary">
+        <canvas id="icon6" class="summary-img"></canvas>
+        <h6 class="summary">Wind</h6>
+      </div>
+      <div class="entry-day">
+        <h4>Wednesday</h4>
+      </div>
+      <div class="entry-temp">
+        <h5>15&nbsp</h5>
+        <h6>8</h6>
+      </div>
+    </div>
+    <div class="entry entry-7">
+      <div class="entry-summary">
+        <canvas id="icon7" class="summary-img"></canvas>
+        <h6 class="summary">Fog</h6>
+      </div>
+      <div class="entry-day">
+        <h4>Thursday</h4>
+      </div>
+      <div class="entry-temp">
+        <h5>13&nbsp</h5>
+        <h6>2</h6>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="footer">
+  <input type="radio" name="option" id="option1" />
+  <label class="hour-data" for="option1" onclick="clickHourly()">
+    <div class="button">
+    <h5><strong>HOURLY</strong></h5>
+    </div>
+    <div class="underline">
+    </div>
+  </label>
+  <input type="radio" name="option" id="option2" checked/>
+  <label class="daily-data" for="option2" onclick="clickDaily()">
+    <div class="button">
+    <h5><strong>DAILY</strong></h5>
+    </div>
+    <div class="underline">
+    </div>
+  </label>
+  <input type="checkbox" id="settings" />
+  <label class="nav-button open" for="settings" onclick="openNav()">
+    <div class="line-one"></div>
+    <div class="line-two"></div>
+    <div class="line-three"></div>
+    </label>
+  </a>
+</div>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<script src='https://gitcdn.link/cdn/darkskyapp/skycons/master/skycons.js'></script>
+<script src='https://maps.googleapis.com/maps/api/js?libraries=places,geometry'></script>
+
   
-  
-  
+
+    <script  src="js/index.js"></script>
+
+
+
 
 </body>
 
