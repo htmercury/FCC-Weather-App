@@ -1,4 +1,4 @@
-@import "https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700";
+﻿@import "https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700";
 
 * {
   font-family: "Open Sans", "Lato", "Lucida Grande", "Lucida Sans Unicode",
@@ -474,7 +474,7 @@ h1,h2,h3,h4,h5,h6,p {
     margin: 20px;
   }
   
-  .design {
+  .attrib {
     bottom: 335px;
   }
 }
