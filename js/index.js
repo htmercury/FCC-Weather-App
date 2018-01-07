@@ -37,18 +37,16 @@ function convertToCelsius(temp) {
 
 function openNav() {
   if ($(".nav").css("width") == $("body").css("width")) {
-    $(".nav").css({ width: "0" });
-    $(".attrib, .made").css({ width: "0" });
+    $(".attrib, .made, .design, .nav").css({ width: "0" });
     return;
   }
   $(".nav").css({ width: "100%" });
-  $(".attrib, .made").css({ width: "auto" });
+  $(".attrib, .made, .design").css({ width: "auto" });
 }
 
 function closeNav() {
   $("#settings").prop("checked", false);
-  $(".nav").css({ width: "0" });
-  $(".attrib, .made").css({ width: "0" });
+  $(".attrib, .made, .design, .nav").css({ width: "0" });
 }
 
 function clickHourly() {
@@ -69,11 +67,11 @@ function roundUp(float) {
   return Math.round(float + 0.5);
 }
 
-function reverseGeocode(lat, long) {
+function reverseGeocode(lat, long, place) {
   $.getJSON(
     "https://api-handler.glitch.me/reverseGeoencode/" + lat + "/" + long,
     function(json) {
-      updateCurrentLocation(json);
+      updateCurrentLocation(json, place);
     }
   );
 }
@@ -97,7 +95,12 @@ function updateCurrentInfo(json) {
   $(".current-summary").html(json.currently.summary);
 }
 
-function updateCurrentLocation(json) {
+function updateCurrentLocation(json, place) {
+  if (json.status == "ZERO_RESULTS") {
+    console.log("HEY");
+   $(".location").html(place.formatted_address);
+    return;
+  }
   let index = json.results[0].address_components.length - 1;
   if (json.results[0].address_components[index].short_name == "US")
     $(".location").html(json.results[0].formatted_address.slice(0, -5));
@@ -137,20 +140,24 @@ function updateDailyInfo(json) {
 // do!
 function updateHourlyTimes(json) {
   let date = new Date(json.currently.time * 1000);
-  var currentHour = date.getUTCHours() + json.offset;
-  let this_hour = currentHour;
+  var currentHour = date.getUTCHours() + json.offset;
+  if (currentHour < 0)
+    currentHour += 24;
+  let this_hour = currentHour;
   let is_morning = true;
   if (this_hour > 12) {
     this_hour -= 12;
     is_morning = false;
   }
   if (this_hour == 0) this_hour += 12;
-  $(".entry-1 > div:nth-child(2) > h4").html("Now");
+  $(".entry-1 > div:nth-child(2) > h4").html("Now");
   for (let i = 1; i < 7; i++) {
     this_hour += 1;
-    if (this_hour == 12) is_morning = !is_morning;
-    if (this_hour > 12) this_hour -= 12;
-    let ending = "PM";
+    if (this_hour == 12) 
+       is_morning = !is_morning;
+    if (this_hour > 12) 
+      this_hour -= 12;
+    let ending = "PM";
     if (is_morning) ending = "AM";
     $(".entry-" + (i + 1) + "> div:nth-child(2) > h4").html(
       this_hour + " " + ending
@@ -190,7 +197,7 @@ function initialize() {
     }
     selectedLat = place.geometry.location.lat();
     selectedLong = place.geometry.location.lng();
-    reverseGeocode(selectedLat, selectedLong);
+    reverseGeocode(selectedLat, selectedLong, place);
     $.getJSON(
       "https://api-handler.glitch.me/forecast/" +
         selectedLat +
@@ -215,17 +222,9 @@ google.maps.event.addDomListener(window, "load", initialize);
 var icon = new Skycons({ color: "#35C8AE" });
 var nightIcon = new Skycons({ color: "#a7a3d8" });
 nightIcon.play();
-icon.set("icon1", Skycons.RAIN);
-icon.set("icon2", Skycons.PARTLY_CLOUDY_DAY);
-icon.set("icon3", Skycons.CLOUDY);
-icon.set("icon4", Skycons.SLEET);
-icon.set("icon5", Skycons.SNOW);
-icon.set("icon6", Skycons.WIND);
-icon.set("icon7", Skycons.FOG);
 icon.play();
 
 var main_icon = new Skycons({ color: "white" });
-main_icon.set("main_icon", Skycons.CLEAR_DAY);
 main_icon.play();
 
 var days = [
@@ -255,11 +254,17 @@ var selectedLat; // Global Lat
 var selectedLong; // Global Long
 var selectedJSON;
 
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(function(position) {
+function success(position) {
     selectedLat = position.coords.latitude;
     selectedLong = position.coords.longitude;
-    console.log(selectedLat + " " + selectedLong);
+    displayGivenLoc(selectedLat, selectedLong);
+}
+  
+  function error() {
+    getIpLoc();
+}
+  
+  function displayGivenLoc(selectedLat, selectedLong) {
     reverseGeocode(selectedLat, selectedLong);
     $.getJSON(
       "https://api-handler.glitch.me/forecast/" +
@@ -272,17 +277,33 @@ if (navigator.geolocation) {
         updateDailyInfo(json);
       }
     );
-  });
-} else {
-  window.alert(
-    "Geolocation is not supported! Please type your location in the settings."
-  );
+  }
+
+function getLocation() {
+  if (!navigator.geolocation) {
+    window.alert("Geolocation is not supported! Please type your location in the settings.");
+    return
+  };
+ 
+  navigator.geolocation.getCurrentPosition(success, error);
 }
+
+function getIpLoc(){
+  var ipInfoUrl = 'https://ipinfo.io/json'; 
+  	$.getJSON(ipInfoUrl, function(data) {
+    	var latLong = data.loc.split(",");
+      selectedLat = latLong[0];
+      selectedLong = latLong[1];
+      displayGivenLoc(selectedLat, selectedLong);
+    }); 
+}
+
+getLocation();
 
 window.onload = function() {
   setTimeout(function() {
     $(".loader-container").css({ width: "0" });
     $(".loader-container > h6").css({ display: "none" });
     $(".loader").css({ display: "none" });
-  }, 1000);
+  }, 4000);
 };
