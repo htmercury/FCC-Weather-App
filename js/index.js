@@ -37,6 +37,8 @@ function convertToCelsius(temp) {
 
 function openNav() {
   if ($(".nav").css("width") == $("body").css("width")) {
+    if ($("#settings").prop("checked") == false)
+      $("#settings").prop("checked", true);
     $(".attrib, .made, .design, .nav").css({ width: "0" });
     return;
   }
