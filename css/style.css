@@ -160,6 +160,8 @@ h1,h2,h3,h4,h5,h6,p {
 .entry-temp > h6 {
   color: #a7a3d8;
   transition: 0.3s;
+  text-align: right;
+  width: 20px;
 }
 
 .attr {
